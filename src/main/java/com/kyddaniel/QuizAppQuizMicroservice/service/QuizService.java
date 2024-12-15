@@ -5,6 +5,7 @@ import com.kyddaniel.QuizAppQuizMicroservice.feign.QuizInterface;
 import com.kyddaniel.QuizAppQuizMicroservice.model.QuestionWrapper;
 import com.kyddaniel.QuizAppQuizMicroservice.model.Quiz;
 import com.kyddaniel.QuizAppQuizMicroservice.model.Response;
+import org.aspectj.weaver.patterns.TypePatternQuestions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,21 +38,16 @@ public class QuizService {
     }
 
     public ResponseEntity<List<QuestionWrapper>> getQuizQuestions(int id) {
+
         Optional<Quiz> quiz = quizDao.findById(id);
 
-//        if (quiz.isPresent()) {
-//            List<Question> questionsFromDB = quiz.get().getQuestions();
-//            List<QuestionWrapper> questionsForUser = new ArrayList<>();
-//
-//            for (Question question : questionsFromDB) {
-//                questionsForUser.add(new QuestionWrapper(question));
-//            }
-//
-//            return new ResponseEntity<>(questionsForUser, HttpStatus.OK);
-//        }
-//        else {
+        if (quiz.isPresent()) {
+            List<Integer> questionsFromDB = quiz.get().getQuestionIDs();
+            return quizInterface.getQuestionsFromId(questionsFromDB);
+        }
+        else {
             return new ResponseEntity<>(new ArrayList<>(), HttpStatus.BAD_REQUEST);
-//        }
+        }
 
     }
 
