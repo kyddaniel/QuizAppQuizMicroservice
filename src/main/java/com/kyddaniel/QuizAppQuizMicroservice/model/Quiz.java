@@ -12,6 +12,8 @@ public class Quiz {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String title;
-    @ManyToMany
-    private List<Question> questions;
+
+    //@ManyToMany         -> for Entity collection
+    @ElementCollection // -> for primitive type collection
+    private List<Integer> questionIDs;
 }

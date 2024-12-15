@@ -1,6 +1,7 @@
 package com.kyddaniel.QuizAppQuizMicroservice.service;
 
 import com.kyddaniel.QuizAppQuizMicroservice.dao.QuizDao;
+import com.kyddaniel.QuizAppQuizMicroservice.feign.QuizInterface;
 import com.kyddaniel.QuizAppQuizMicroservice.model.QuestionWrapper;
 import com.kyddaniel.QuizAppQuizMicroservice.model.Quiz;
 import com.kyddaniel.QuizAppQuizMicroservice.model.Response;
@@ -19,17 +20,18 @@ public class QuizService {
     @Autowired
     QuizDao quizDao;
 
+    @Autowired
+    QuizInterface quizInterface;
+
     public ResponseEntity<String> createQuiz(String category, int numQ, String title) {
 
         // call the "generate" URL from Question Service
-        List<Integer> questions = questionDao.findRandomQuestionsByCategory(category, numQ);
+        List<Integer> questions = quizInterface.getQuestionsForQuiz(category, numQ).getBody();
 
-//        List<Question> questions = questionDao.findRandomQuestionsByCategory(category, numQ);
-//
-//        Quiz quiz = new Quiz();
-//        quiz.setTitle(title);
-//        quiz.setQuestions(questions);
-//        quizDao.save(quiz);
+        Quiz quiz = new Quiz();
+        quiz.setTitle(title);
+        quiz.setQuestionIDs(questions);
+        quizDao.save(quiz);
 
         return new ResponseEntity<>("Success", HttpStatus.CREATED);
     }
@@ -48,7 +50,7 @@ public class QuizService {
 //            return new ResponseEntity<>(questionsForUser, HttpStatus.OK);
 //        }
 //        else {
-//            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.BAD_REQUEST);
 //        }
 
     }
@@ -68,7 +70,7 @@ public class QuizService {
 //            return new ResponseEntity<>(correct, HttpStatus.OK);
 //        }
 //        else {
-//            return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
 //        }
     }
 }
